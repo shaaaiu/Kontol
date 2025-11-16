@@ -13,8 +13,8 @@ const global = {
   // QRIS CONFIG (Ryuuxiao)
   qrisBaseUrl: "https://apii.ryuuxiao.biz.id",
   qrisApiToken: "RyuuXiao",
-  qrisUsername: "adjie22",
-  qrisOrderToken: "1451589:fsoScMnGEp6kjIQav2L7l0ZWgd1NXVer",
+  qrisUsername: "pahmi1122",
+  qrisOrderToken: "2483133:baJBuT3pYRVmAHSveLkEQn2gc4i5ZlPN",
 
   CURRENT_QRIS_KEY: "current_qris_session",
   STORAGE_KEY: "riwayat_transaksi_panel",
