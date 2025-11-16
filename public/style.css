@@ -1,32 +1,338 @@
+/* RESET SINGKAT */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
-*{box-sizing:border-box;font-family:sans-serif;margin:0;padding:0}
-body{background:#0f172a;color:#e5e7eb;display:flex;justify-content:center;padding:16px}
-.page{max-width:800px;width:100%}
-.hero{display:flex;align-items:center;margin-bottom:16px}
-.hero-left{display:flex;align-items:center;gap:12px}
-.avatar{width:40px;height:40px;border-radius:999px;background:#1d4ed8;display:flex;align-items:center;justify-content:center;font-weight:bold}
-.hero-title{font-size:1.5rem}
-.hero-subtitle{font-size:.85rem;color:#9ca3af}
-.card{background:#020617;border-radius:12px;padding:16px;margin-bottom:16px;border:1px solid #1f2937}
-.card-title{font-size:1.1rem;margin-bottom:6px}
-.card-desc{font-size:.85rem;color:#9ca3af;margin-bottom:10px}
-.form-group{margin-bottom:10px}
-.form-group label{display:block;font-size:.85rem;margin-bottom:4px}
-.form-group input,.form-group select{width:100%;padding:8px;border-radius:8px;border:1px solid #374151;background:#020617;color:#e5e7eb}
-.total-harga{font-weight:bold;margin-bottom:10px}
-.buttons-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-.btn{border:none;border-radius:999px;padding:8px 14px;font-size:.85rem;cursor:pointer}
-.btn-primary{background:#2563eb;color:white}
-.btn-secondary{background:#111827;color:#e5e7eb;border:1px solid #374151}
-.btn-ghost{background:transparent;border:1px solid #4b5563;color:#e5e7eb}
-.btn-danger{background:#dc2626;color:white}
-.loading{font-size:.85rem;color:#eab308}
-.hidden{display:none}
-.qr-wrapper{display:flex;justify-content:center;margin:10px 0}
-.qr-wrapper img{max-width:250px;width:100%;background:white;padding:8px;border-radius:12px}
-.detail-text{font-size:.8rem;background:#020617;border-radius:8px;padding:8px;border:1px solid #1f2937;white-space:pre-wrap}
-.modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.9);justify-content:center;align-items:center;padding:16px;z-index:50}
-.modal-content{background:#020617;border-radius:12px;max-width:600px;width:100%;border:1px solid #1f2937;max-height:80vh;display:flex;flex-direction:column}
-.modal-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #111827}
-.modal-body{padding:12px 16px;overflow:auto}
-.close-btn{cursor:pointer;font-size:1.5rem}
+/* THEME VARIABLE (AKAN DI-GANTI RANDOM DI JS) */
+:root {
+  --bg: #020617;
+  --card: #020617;
+  --card-border: #1f2937;
+  --accent: #00ff6a;              /* warna default, nanti di-random tiap order */
+  --accent-soft: rgba(0, 255, 106, 0.25);
+  --text-main: #e5e7eb;
+  --text-muted: #9ca3af;
+}
+
+/* BODY */
+body {
+  background: radial-gradient(circle at top, #001f10 0, #000000 55%, #000000 100%);
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+/* PAGE WRAPPER */
+.page {
+  max-width: 900px;
+  width: 100%;
+}
+
+/* HERO */
+.hero {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.hero-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--accent) 0, #022c22 60%, #000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #000;
+  box-shadow: 0 0 15px var(--accent-soft);
+}
+
+.hero-title {
+  font-size: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* CARD */
+.card {
+  background: radial-gradient(circle at top left, rgba(34,197,94,0.12), transparent 40%) #020617;
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 0 25px rgba(0,0,0,0.7);
+}
+
+.card-title {
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+/* FORM */
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: rgba(15,23,42,0.9);
+  color: var(--text-main);
+  outline: none;
+  transition: border 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-soft), 0 0 16px var(--accent-soft);
+  background: rgba(15,23,42,0.95);
+}
+
+/* TOTAL HARGA */
+.total-harga {
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--accent);
+  text-shadow: 0 0 6px var(--accent-soft);
+}
+
+/* BUTTONS */
+.buttons-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.12s, border-color 0.12s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, var(--accent), #a3ffce);
+  color: #000;
+  box-shadow: 0 0 16px var(--accent-soft);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 22px var(--accent-soft);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #4b5563;
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-soft);
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #4b5563;
+  color: var(--text-main);
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent-soft);
+}
+
+.btn-danger {
+  background: linear-gradient(90deg, #f97373, #ef4444);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(248,113,113,0.4);
+}
+
+.btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(248,113,113,0.5);
+}
+
+.loading {
+  font-size: 0.85rem;
+  color: #fbbf24;
+}
+
+/* UTIL */
+.hidden {
+  display: none;
+}
+
+/* QR WRAPPER + BORDER NEON RANDOM */
+.qr-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.qr-wrapper img {
+  max-width: 260px;
+  width: 100%;
+  background: #fff;
+  padding: 10px;
+  border-radius: 16px;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 25px var(--accent-soft);
+}
+
+/* INFO PEMBAYARAN – KEREN */
+.detail-text {
+  font-size: 0.8rem;
+  background: radial-gradient(circle at top, rgba(34,197,94,0.18), rgba(15,23,42,0.95));
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 20px var(--accent-soft);
+  white-space: pre-wrap;
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  position: relative;
+  overflow: hidden;
+}
+
+.detail-text::before {
+  content: "INFORMASI PEMBAYARAN";
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  opacity: 0.85;
+}
+
+/* MODAL RIWAYAT */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 50;
+  backdrop-filter: blur(6px);
+}
+
+.modal-content {
+  background: #020617;
+  border-radius: 18px;
+  max-width: 650px;
+  width: 100%;
+  border: 1px solid #1f2937;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #111827;
+}
+
+.modal-title {
+  font-size: 0.95rem;
+}
+
+.modal-body {
+  padding: 12px 16px;
+  overflow: auto;
+}
+
+/* KARTU RIWAYAT */
+.riwayat-empty {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.riwayat-item {
+  border-radius: 14px;
+  padding: 10px 12px;
+  border: 1px solid #1f2937;
+  background: radial-gradient(circle at top left, rgba(34,197,94,0.12), #020617);
+  margin-bottom: 10px;
+  font-size: 0.83rem;
+}
+
+.riwayat-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.riwayat-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.riwayat-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.close-btn {
+  cursor: pointer;
+  font-size: 1.5rem;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .card {
+    padding: 14px;
+  }
+  .buttons-row {
+    flex-direction: column;
+  }
+  }
