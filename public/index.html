@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pembayaran Panel QRIS Otomatis</title>
-  <link rel="stylesheet" href="style.css" /> 
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="page">
@@ -20,29 +20,41 @@
           </p>
         </div>
       </div>
+      <div class="hero-right">
+        <span class="hero-pill">Auto Panel • QRIS</span>
+      </div>
     </header>
 
     <main class="main">
-      <section class="card">
-        <h2 class="card-title">Form Pemesanan</h2>
+      <section class="card card-form">
+        <div class="card-header-row">
+          <h2 class="card-title">Form Pemesanan</h2>
+          <span class="card-tag">Step 1 • Isi Data</span>
+        </div>
         <p class="card-desc">
-          Masukkan nomor WhatsApp, username panel, dan pilih paket. Server akan dibuat otomatis setelah pembayaran sukses.  
-          <b>(Wajib transfer sesuai total harga + kode unik)</b>
+          Masukkan nomor WhatsApp, username panel, dan pilih paket. Server akan dibuat otomatis setelah pembayaran sukses. <strong>(Wajib transfer sesuai total harga + kode unik)</strong>
         </p>
 
-        <!-- INPUT WhatsApp -->
-        <div class="form-group">
-            <label for="telepon">Nomor Telepon (WhatsApp/Aktif)</label>
-            <input type="tel" id="telepon" placeholder="Contoh: 081234567890"/>
+        <div class="form-row">
+          <div class="form-group">
+              <label for="telepon">Nomor Telepon (WhatsApp/Aktif)</label>
+              <input
+                  type="tel"
+                  id="telepon"
+                  placeholder="Contoh: 081234567890"
+              />
+          </div>
+
+          <div class="form-group">
+            <label for="username">Username Panel</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="3-15 huruf / angka tanpa spasi"
+            />
+          </div>
         </div>
 
-        <!-- INPUT Username -->
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" placeholder="Masukkan username panel"/>
-        </div>
-
-        <!-- SELECT RAM -->
         <div class="form-group">
           <label for="ram">Pilih Paket RAM</label>
           <select id="ram" onchange="updateTotalHarga()">
@@ -62,33 +74,35 @@
           </select>
         </div>
 
-        <!-- TOTAL HARGA -->
         <p id="totalHarga" class="total-harga">Total Harga: Rp0</p>
 
-        <!-- BUTTON ROW -->
         <div class="buttons-row">
           <button class="btn btn-primary" type="button" onclick="buatQris()">
-            Buat QRIS
+            <span>🔗</span> Buat QRIS
           </button>
-
           <button class="btn btn-ghost" type="button" onclick="refreshInput()">
-            Refresh Input
+            🔄 Refresh Input
           </button>
-
-          <button id="btnBatal" class="btn btn-danger hidden" type="button" onclick="batalQris(true)">
-            Batalkan
+          <button
+            id="btnBatal"
+            class="btn btn-danger hidden"
+            type="button"
+            onclick="batalQris(true)"
+          >
+            ❌ Batalkan
           </button>
         </div>
 
-        <p id="loadingText" class="loading hidden">Membuat QRIS...</p>
+        <p id="loadingText" class="loading hidden">Membuat QRIS & menghubungkan ke sistem...</p>
       </section>
 
-      <!-- QRIS SECTION -->
       <section id="qrisSection" class="card hidden">
-        <h2 class="card-title">QRIS Pembayaran</h2>
+        <div class="card-header-row">
+          <h2 class="card-title">QRIS Pembayaran</h2>
+          <span class="card-tag card-tag-live">Step 2 • Scan & Bayar</span>
+        </div>
         <p class="card-desc">
-          Scan QRIS berikut lalu selesaikan pembayaran. Pastikan jumlah transfer
-          <b>sama persis</b> (termasuk kode unik).
+          Scan QRIS berikut lalu selesaikan pembayaran sebelum waktu habis. Pastikan jumlah transfer <strong>sama persis</strong> dengan total harga yang ditampilkan (termasuk kode unik).
         </p>
 
         <div class="qr-wrapper">
@@ -98,22 +112,21 @@
         <pre id="detailPembayaran" class="detail-text"></pre>
       </section>
 
-      <!-- RIWAYAT SECTION -->
       <section class="card">
-        <h2 class="card-title">Riwayat Transaksi</h2>
+        <div class="card-header-row">
+          <h2 class="card-title">Riwayat Transaksi</h2>
+          <span class="card-tag">Step 3 • Cek Panel</span>
+        </div>
         <p class="card-desc">
           Riwayat tersimpan di perangkat ini. Gunakan untuk melihat ulang detail login panel.
         </p>
-
         <button class="btn btn-secondary" type="button" onclick="openRiwayat()">
-          Lihat Riwayat Transaksi
+          📜 Lihat Riwayat Transaksi
         </button>
       </section>
-
     </main>
   </div>
 
-  <!-- MODAL RIWAYAT -->
   <div id="riwayatModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -123,7 +136,6 @@
       <div id="riwayatList" class="modal-body riwayat-list"></div>
     </div>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
