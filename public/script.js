@@ -3,8 +3,7 @@ const global = {
   // Domain panel Pterodactyl
   domain: "https://panel.xiao-store.web.id",
 
-  // Application API Key Pterodactyl (ptla_....)
-  // TIDAK dipakai langsung di client, cukup di backend.
+  // (Hanya dipakai di backend /env, di client ini cuma info saja)
   ADMIN_SERVER_API: "ptla_sRRmcKRjicoJfsioKKZqlb8221avLOQlLdzNFJifzzE",
 
   nestid: "5",
@@ -26,7 +25,7 @@ const global = {
   TELEGRAM_CHAT_ID: "5254873680",
 };
 
-// PACKAGE CONFIG (Nilai Memory, Disk, CPU akan digunakan sesuai paket)
+// PACKAGE CONFIG
 const PACKAGE_CONFIG = {
   '1':      { nama: '500mb', harga: 1,      memo: 1048,  disk: 2000, cpu: 30  },
   '2000':   { nama: '1gb',   harga: 2000,   memo: 1048,  disk: 2000, cpu: 30  },
@@ -53,8 +52,9 @@ function toRupiah(number) {
     }).format(number).replace('Rp', 'Rp');
 }
 
+// 🔢 KODE UNIK: FIX 120 (tidak random lagi)
 function getKodeUnik() {
-    return Math.floor(Math.random() * (999 - 100 + 1) + 100);
+  return 120;
 }
 
 function getSelectedRamInfo() {
@@ -119,7 +119,7 @@ function loadSavedQris() {
     }
 }
 
-// FUNGSI SEND TELEGRAM DI SISI CLIENT INI TIDAK AMAN, KARENA KEY BOT TEREKSPOS.
+// TELEGRAM
 async function sendTelegramNotification(message) {
     if (!global.TELEGRAM_BOT_TOKEN || !global.TELEGRAM_CHAT_ID) {
         console.warn("Bot token / chat id belum di-set.");
@@ -142,6 +142,15 @@ async function sendTelegramNotification(message) {
     }
 }
 
+// 🎨 RANDOM NEON UNTUK TIAP ORDER
+function applyRandomAccentColor(){
+  const colors = ['#00ff6a','#00f0ff','#ff00ff','#ffdd00','#00ffa5','#b6ff00'];
+  const pick = colors[Math.floor(Math.random()*colors.length)];
+  document.documentElement.style.setProperty('--accent', pick);
+  document.documentElement.style.setProperty('--accent-soft', 'rgba(0, 255, 106, 0.25)');
+}
+
+// BUAT QRIS
 async function buatQris(){
   const telepon=$("telepon").value.trim();
   const username=$("username").value.trim();
@@ -166,6 +175,9 @@ async function buatQris(){
         loadingText.classList.add("hidden");
         return;
     }
+
+    // 🎨 Ganti warna neon setiap order
+    applyRandomAccentColor();
     
     const url=`${global.qrisBaseUrl}/orderkuota/createpayment?apikey=${global.qrisApiToken}&username=${global.qrisUsername}&token=${global.qrisOrderToken}&amount=${totalHargaDibayar}`;
     const res=await fetch(url);
@@ -187,16 +199,18 @@ async function buatQris(){
 
     $("qrisImage").src=qrUrl;
 
-    const waktu=new Date().toLocaleString("id-ID");
+    const now = new Date();
+    const expiredAt = new Date(now.getTime() + 5 * 60 * 1000); // ⏱ 5 MENIT AUTO CANCEL
+
+    const displayId = `RyuuXiao-${paymentId}`;
     const detailText = 
-      "INFORMASI PEMBAYARAN\n"+
-      `ID        : ${paymentId}\n`+
-      `Username  : ${username}\n`+
-      `Paket     : ${ramNama.toUpperCase()} (${toRupiah(ramHarga)})\n`+
-      `Kode Unik : ${kodeUnik}\n`+
-      `*TOTAL BAYAR: ${toRupiah(totalHargaDibayar)}*\n`+ 
-      `Waktu     : ${waktu}`;
-      
+`ID        : ${displayId}
+Paket     : ${ramNama.toUpperCase()} (${toRupiah(ramHarga)})
+Total     : ${toRupiah(totalHargaDibayar)}
+Expired   : ${expiredAt.toLocaleString("id-ID")}
+Username  : ${username}
+Kode Unik : ${kodeUnik}`;
+
     $("detailPembayaran").textContent = detailText;
 
     localStorage.setItem(global.CURRENT_QRIS_KEY, JSON.stringify({
@@ -208,7 +222,7 @@ async function buatQris(){
         ramNama,
         qrUrl,
         detailText,
-        waktuKadaluarsa: Date.now() + (30 * 60 * 1000)
+        waktuKadaluarsa: expiredAt.getTime()
     }));
 
     mulaiCekMutasi(paymentId, username, totalHargaDibayar, telepon, ramHarga);
@@ -222,9 +236,10 @@ async function buatQris(){
 
 let mutasiInterval;
 
+// CEK MUTASI + AUTO CANCEL 5 MENIT
 async function mulaiCekMutasi(paymentId, username, totalHargaDibayar, telepon, hargaTanpaUnik){
   let counter=0; 
-  const maxCheck=60;
+  const maxCheck=30; // 5 menit / 10 detik
 
   if (mutasiInterval) clearInterval(mutasiInterval);
 
@@ -292,24 +307,27 @@ async function mulaiCekMutasi(paymentId, username, totalHargaDibayar, telepon, h
         }
       }
 
+      // AUTO CANCEL 5 MENIT
+      const saved = localStorage.getItem(global.CURRENT_QRIS_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.waktuKadaluarsa && parsed.waktuKadaluarsa < Date.now()) {
+          clearInterval(mutasiInterval);
+          localStorage.removeItem(global.CURRENT_QRIS_KEY);
+          alert("Waktu pembayaran habis (5 menit). QRIS dibatalkan otomatis.");
+          closeQris();
+          return;
+        }
+      }
+
       if(counter>=maxCheck){
         clearInterval(mutasiInterval);
         localStorage.removeItem(global.CURRENT_QRIS_KEY);
-        alert("Waktu pembayaran habis.");
+        alert("Waktu pembayaran habis (5 menit).");
         batalQris(true); 
       }
 
     }catch(e){ 
-        const savedQris = localStorage.getItem(global.CURRENT_QRIS_KEY);
-        if (savedQris) {
-            const qrisData = JSON.parse(savedQris);
-            if (qrisData.waktuKadaluarsa && qrisData.waktuKadaluarsa < Date.now()) {
-                clearInterval(mutasiInterval);
-                localStorage.removeItem(global.CURRENT_QRIS_KEY);
-                alert("Waktu pembayaran habis.");
-                closeQris();
-            }
-        }
         console.error(e); 
     }
   },10000);
@@ -416,37 +434,103 @@ Expired : ${info.expired}`
     }
 }
 
-// RIWAYAT (placeholder, silakan isi sesuai kebutuhan)
+// ===============================================
+// RIWAYAT (LOCALSTORAGE + POPUP)
+// ===============================================
 function getRiwayat(){
-  // ... (Logika getRiwayat)
+  try {
+    const raw = localStorage.getItem(global.STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed;
+  } catch {
+    return [];
+  }
 }
 
 function simpanRiwayat(d){
-  // ... (Logika simpanRiwayat)
+  const list = getRiwayat();
+  const item = {
+    ...d,
+    uniqueId: Date.now() + "_" + Math.random().toString(16).slice(2)
+  };
+  list.unshift(item);
+  localStorage.setItem(global.STORAGE_KEY, JSON.stringify(list));
 }
 
 function renderRiwayat(){
-  // ... (Logika renderRiwayat)
+  const container = $("riwayatList");
+  const data = getRiwayat();
+
+  if (!data.length) {
+    container.innerHTML = `<p class="riwayat-empty">Riwayat masih kosong. Belum ada pembelian yang sukses.</p>`;
+    return;
+  }
+
+  const html = data.map((d, idx)=> {
+    return `
+<div class="riwayat-item">
+  <div class="riwayat-item-header">
+    <strong>Transaksi #${data.length - idx}</strong>
+    <span class="riwayat-badge">${d.status || "Sukses"}</span>
+  </div>
+  <div>
+    <div>ID: ${d.id}</div>
+    <div>Username: ${d.username}</div>
+    <div>No WA: ${d.telepon || "-"}</div>
+    <div>Harga: ${toRupiah(d.harga || 0)}</div>
+    <div>Waktu: ${d.waktu}</div>
+    <div>Expired: ${d.exp || "-"}</div>
+  </div>
+  <div class="riwayat-actions">
+    <button class="btn btn-secondary" onclick="copyLogin('${d.panelUser}','${d.panelPass}','${d.panelLink}')">Copy Login</button>
+    <button class="btn btn-ghost" onclick="hapusRiwayat('${d.uniqueId}')">Hapus</button>
+  </div>
+</div>`;
+  }).join("");
+
+  container.innerHTML = html;
 }
 
 function copyLogin(user, pass, link) {
-  // ... (Logika copyLogin)
+  const text = `Login Panel: ${link}\nUsername: ${user}\nPassword: ${pass}`;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(()=>{
+      alert("Detail login sudah disalin ke clipboard.");
+    }).catch(()=>{
+      alert(text);
+    });
+  } else {
+    alert(text);
+  }
 }
 
 function hapusRiwayat(uniqueId) {
-  // ... (Logika hapusRiwayat)
+  const data = getRiwayat();
+  const filtered = data.filter(d => d.uniqueId !== uniqueId);
+  localStorage.setItem(global.STORAGE_KEY, JSON.stringify(filtered));
+  renderRiwayat();
 }
 
 function openRiwayat(){ 
-  // ... (Logika openRiwayat)
+  renderRiwayat();
+  const modal = $("riwayatModal");
+  if (modal) {
+    modal.style.display = "flex";
+  }
 }
 
 function closeRiwayat(){ 
-  // ... (Logika closeRiwayat)
+  const modal = $("riwayatModal");
+  if (modal) {
+    modal.style.display = "none";
+  }
 }
 
+// Opsional: blok pull to refresh (kosongin aja kalau nggak perlu)
 function setupPullToRefreshBlocker(){
-  // ... (Logika setupPullToRefreshBlocker)
+  // dibiarkan kosong
 }
 
 window.addEventListener("load",()=>{
