@@ -1,7 +1,7 @@
 {
-  "name": "panel-qris-auto",
+  "name": "neon-panel-qris",
   "version": "1.0.0",
-  "private": true,
+  "type": "module",
   "dependencies": {
     "moment-timezone": "^0.5.45"
   }
